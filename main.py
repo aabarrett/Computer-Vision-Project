@@ -1,7 +1,6 @@
 import os
 import cv2
 from sklearn.model_selection import train_test_split
-from skimage.transform import resize
 import tensorflow
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import optimizers
@@ -17,12 +16,16 @@ training_names = [os.path.join(d, o) for o in os.listdir(d)
 images = []
 names = []
 path = os.getcwd()
-new_shape = (128,128,3)
+image_size = 32
 
 for image_folder in training_names:
     for file_name in os.listdir(image_folder):
-        images.append(resize(cv2.imread(path + '/' + image_folder[2:] + '/' + file_name), new_shape))
-        names.append(image_folder)
+        if 'n02' in file_name :
+            image = cv2.imread(path + '/' + image_folder[2:] + '/' + file_name)
+            if image is None:
+                print(file_name)
+            images.append(cv2.resize(image, (image_size, image_size)))
+            names.append(image_folder)
 
 train_x, test_x, train_y, test_y = train_test_split(images, names, test_size=0.2)
 
