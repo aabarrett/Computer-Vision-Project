@@ -2,6 +2,7 @@ import os
 import cv2
 from sklearn.model_selection import train_test_split
 import tensorflow
+from scipy.stats import itemfreq
 from tensorflow.keras.models import Sequential
 from tensorflow.keras import optimizers
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, BatchNormalization, \
@@ -12,6 +13,27 @@ from matplotlib.image import imread
 import os
 import numpy as np
 import pickle
+
+def matrix_Bin(labels):
+    labels_bin=np.array([])
+
+    labels_name, labels0 = np.unique(labels, return_inverse=True)
+    labels0
+    
+    for _, i in enumerate(itemfreq(labels0)[:,0].astype(int)):
+        labels_bin0 = np.where(labels0 == itemfreq(labels0)[:,0][i], 1., 0.)
+        labels_bin0 = labels_bin0.reshape(1,labels_bin0.shape[0])
+
+        if (labels_bin.shape[0] == 0):
+            labels_bin = labels_bin0
+        else:
+            labels_bin = np.concatenate((labels_bin,labels_bin0 ),axis=0)
+
+    print("Nber SubVariables {0}".format(itemfreq(labels0)[:,0].shape[0]))
+    labels_bin = labels_bin.transpose()
+    print("Shape : {0}".format(labels_bin.shape))
+    
+    return labels_name, labels_bin
 
 os.chdir('stanford-dogs-dataset/images/Images')
 d = '.'
@@ -32,11 +54,13 @@ for image_folder in training_names:
             images.append(cv2.resize(image, (image_size, image_size)))
             names.append(image_folder)
 
-y_train_raw = np.array(names, np.uint8)
+# y_train_raw = np.array(names, np.uint8)
 x_train_raw = np.array(images, np.float32) / 255.
 num_class = 120 #y_train_raw.shape[1]
 
-train_x, test_x, train_y, test_y = train_test_split(x_train_raw, y_train_raw, test_size=0.2)
+labels_name, labels_bin = matrix_Bin(names)
+
+train_x, test_x, train_y, test_y = train_test_split(x_train_raw, labels_bin, test_size=0.2)
 
 # plot dog photos from the dogs vs cats dataset
 
