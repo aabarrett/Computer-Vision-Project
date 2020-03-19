@@ -1,9 +1,10 @@
 import os
 import cv2
 from sklearn.model_selection import train_test_split
-import tensorflow
+import tensorflow as tf
 from scipy.stats import itemfreq
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras import optimizers
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, BatchNormalization, \
     GlobalAveragePooling2D
@@ -34,6 +35,7 @@ def matrix_Bin(labels):
     print("Shape : {0}".format(labels_bin.shape))
     
     return labels_name, labels_bin
+
 
 os.chdir('stanford-dogs-dataset/images/Images')
 d = '.'
@@ -92,11 +94,18 @@ model.summary()
 
 # opt = optimizers.Adam(lr = learning_rate)
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+two_up = os.path.abspath(os.path.join(__file__ ,"../.."))
+os.chdir(two_up)
+
+checkpoint = ModelCheckpoint(filepath='checkpoints.hdf5', verbose=1, save_best_only=True)
+
 history = model.fit(train_x, train_y, validation_data=(test_x, test_y), batch_size=batch_size,verbose=2, epochs=epochs, shuffle = True)
 
+model.save('saved_model/my_model')
 # save the model to disk
 filename = 'finalized_model.sav'
-pickle.dump(model, open(filename, 'wb'))
+# pickle.dump(model, open(filename, 'wb'))
 
 # some time later...
 
