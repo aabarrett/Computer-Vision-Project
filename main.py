@@ -13,7 +13,6 @@ from matplotlib import pyplot
 from matplotlib.image import imread
 import os
 import numpy as np
-import pickle
 
 def matrix_Bin(labels):
     labels_bin=np.array([])
@@ -64,12 +63,9 @@ labels_name, labels_bin = matrix_Bin(names)
 
 train_x, test_x, train_y, test_y = train_test_split(x_train_raw, labels_bin, test_size=0.2)
 
-# plot dog photos from the dogs vs cats dataset
-
 batch_size = 128
 epochs = 20
 learning_rate = 0.001
-
 
 model = Sequential()
 model.add(BatchNormalization(input_shape=(image_size, image_size, 3)))
