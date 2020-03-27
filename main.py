@@ -20,26 +20,26 @@ import ssl
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def matrix_Bin(labels):
-    labels_bin=np.array([])
-
-    labels_name, labels0 = np.unique(labels, return_inverse=True)
-    labels0
-    
-    for _, i in enumerate(itemfreq(labels0)[:,0].astype(int)):
-        labels_bin0 = np.where(labels0 == itemfreq(labels0)[:,0][i], 1., 0.)
-        labels_bin0 = labels_bin0.reshape(1,labels_bin0.shape[0])
-
-        if (labels_bin.shape[0] == 0):
-            labels_bin = labels_bin0
-        else:
-            labels_bin = np.concatenate((labels_bin,labels_bin0 ),axis=0)
-
-    print("Nber SubVariables {0}".format(itemfreq(labels0)[:,0].shape[0]))
-    labels_bin = labels_bin.transpose()
-    print("Shape : {0}".format(labels_bin.shape))
-    
-    return labels_name, labels_bin
+# def matrix_Bin(labels):
+#     labels_bin=np.array([])
+#
+#     labels_name, labels0 = np.unique(labels, return_inverse=True)
+#     labels0
+#
+#     for _, i in enumerate(itemfreq(labels0)[:,0].astype(int)):
+#         labels_bin0 = np.where(labels0 == itemfreq(labels0)[:,0][i], 1., 0.)
+#         labels_bin0 = labels_bin0.reshape(1,labels_bin0.shape[0])
+#
+#         if (labels_bin.shape[0] == 0):
+#             labels_bin = labels_bin0
+#         else:
+#             labels_bin = np.concatenate((labels_bin,labels_bin0 ),axis=0)
+#
+#     print("Nber SubVariables {0}".format(itemfreq(labels0)[:,0].shape[0]))
+#     labels_bin = labels_bin.transpose()
+#     print("Shape : {0}".format(labels_bin.shape))
+#
+#     return labels_name, labels_bin
 
 # Setup Model
 img_size = 128
@@ -68,13 +68,24 @@ d = '.'
 training_names = [os.path.join(d, o) for o in os.listdir(d)
                   if os.path.isdir(os.path.join(d, o))]
 
+num_class = 120
 imgs = []
 names = []
+bin_names = []
+labels_bin = np.zeros((1, num_class))
 path = os.getcwd()
+cnt_file = 0
+cnt_bin = 0
+row_to_be_added = np.zeros((1, num_class))
 print('Parsing Files for dataset')
 for img_folder in training_names:
     for file_name in os.listdir(img_folder):
         if 'n02' in file_name :
+            if cnt_file == 0:
+                previous_folder = img_folder
+                bin_names.append(img_folder)
+            else:
+                labels_bin = np.vstack((labels_bin, row_to_be_added))
             img = image.load_img(path + '/' + img_folder[2:] + '/' + file_name, target_size=(img_size, img_size))
             # img = cv2.imread(path + '/' + img_folder[2:] + '/' + file_name)
             if img is None:
@@ -85,13 +96,25 @@ for img_folder in training_names:
             imgs.append(img[0])
             # imgs.append(cv2.resize(img, (img_size, img_size)))
             names.append(img_folder)
+            if img_folder != previous_folder:
+                cnt_bin = cnt_bin+1
+                bin_names.append(img_folder)
+            labels_bin[cnt_file, cnt_bin] = 1
+            previous_folder = img_folder
+            cnt_file = cnt_file + 1
+
+print('labels_bin:')
+print(labels_bin)
+print('names:')
+print(names)
+print('bin_names:')
+print(bin_names)
 
 # x_train_raw = np.array(imgs, np.float32) / 255
 x_train_raw = np.array(imgs, np.float32)
 
-num_class = 120
 
-labels_name, labels_bin = matrix_Bin(names)
+#labels_name, labels_bin = matrix_Bin(names)
 
 train_x, test_x, train_y, test_y = train_test_split(x_train_raw, labels_bin, test_size=0.2)
 
@@ -110,7 +133,7 @@ os.chdir(two_up)
 
 history = model.fit(train_x, train_y, batch_size=batch_size, validation_data=(test_x, test_y), verbose=2, epochs=epochs, shuffle = True)
 
-model.save('saved_model/my_model')
+model.save('new_model.h5')
 
 results = model.evaluate(test_x, test_y, batch_size=batch_size)
 print('test loss, test acc:', results)
