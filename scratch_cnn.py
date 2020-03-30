@@ -44,7 +44,7 @@ model.add(MaxPooling2D(pool_size=2))
 model.add(BatchNormalization())
 model.add(GlobalAveragePooling2D())
 model.add(Dropout(0.5))
-model.add(Dense(30, activation='softmax'))
+model.add(Dense(29, activation='softmax'))
 model.summary()
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -54,7 +54,7 @@ d = '.'
 training_names = [os.path.join(d, o) for o in os.listdir(d)
                   if os.path.isdir(os.path.join(d, o))]
 
-num_class = 5
+num_class = 29
 imgs = []
 names = []
 bin_names = []
