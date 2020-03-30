@@ -14,6 +14,7 @@ from tensorflow.keras.applications import resnet50
 from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
 from matplotlib import pyplot
 from matplotlib.image import imread
+from tqdm import tqdm
 import os
 import numpy as np
 import ssl
@@ -78,7 +79,7 @@ cnt_file = 0
 cnt_bin = 0
 row_to_be_added = np.zeros((1, num_class))
 print('Parsing Files for dataset')
-for img_folder in training_names:
+for img_folder in tqdm(training_names):
     for file_name in os.listdir(img_folder):
         if 'n02' in file_name :
             if cnt_file == 0:
@@ -103,12 +104,12 @@ for img_folder in training_names:
             previous_folder = img_folder
             cnt_file = cnt_file + 1
 
-print('labels_bin:')
-print(labels_bin)
-print('names:')
-print(names)
-print('bin_names:')
-print(bin_names)
+# print('labels_bin:')
+# print(labels_bin)
+# print('names:')
+# print(names)
+# print('bin_names:')
+# print(bin_names)
 
 # x_train_raw = np.array(imgs, np.float32) / 255
 x_train_raw = np.array(imgs, np.float32)
@@ -123,7 +124,7 @@ train_x, test_x, train_y, test_y = train_test_split(x_train_raw, labels_bin, tes
 # test_x = preprocess_input(test_x)
 
 batch_size = 64
-epochs = 20
+epochs = 1
 learning_rate = 0.0001
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
