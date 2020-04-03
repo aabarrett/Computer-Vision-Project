@@ -12,7 +12,7 @@ from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications import resnet50
 from tensorflow.keras.applications.resnet50 import preprocess_input, decode_predictions
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 from matplotlib.image import imread
 from tqdm import tqdm
 import os
@@ -39,10 +39,10 @@ model = Sequential()
 model.add(resnet)
 model.add(GlobalAveragePooling2D())
 model.add(Dropout(0.2))
-model.add(Dense(10, activation='relu'))
+model.add(Dense(60, activation='relu'))
 model.add(BatchNormalization())
 model.add(Dropout(0.2))
-model.add(Dense(5, activation='softmax'))
+model.add(Dense(30, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
@@ -51,7 +51,7 @@ d = '.'
 training_names = [os.path.join(d, o) for o in os.listdir(d)
                   if os.path.isdir(os.path.join(d, o))]
 
-num_class = 5
+num_class = 30
 imgs = []
 names = []
 bin_names = []
