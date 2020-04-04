@@ -56,10 +56,10 @@ for layer in resnet.layers:
 model = Sequential()
 model.add(resnet)
 model.add(GlobalAveragePooling2D())
-#model.add(Dropout(0.2))
+model.add(Dropout(0.2))
 model.add(Dense(256, activation='relu'))
 model.add(BatchNormalization())
-#model.add(Dropout(0.2))
+model.add(Dropout(0.2))
 model.add(Dense(120, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
