@@ -56,10 +56,10 @@ for layer in resnet.layers:
 model = Sequential()
 model.add(resnet)
 model.add(GlobalAveragePooling2D())
-model.add(Dropout(0.2))
+#model.add(Dropout(0.2))
 model.add(Dense(256, activation='relu'))
 model.add(BatchNormalization())
-model.add(Dropout(0.2))
+#model.add(Dropout(0.2))
 model.add(Dense(120, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -124,7 +124,7 @@ train_x, test_x, train_y, test_y = train_test_split(x_train_raw, labels_bin, tes
 # test_x = preprocess_input(test_x)
 
 batch_size = 64
-epochs = 1
+epochs = 50
 learning_rate = 0.0001
 
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -134,7 +134,8 @@ os.chdir(two_up)
 
 history = model.fit(train_x, train_y, batch_size=batch_size, validation_data=(test_x, test_y), verbose=2, epochs=epochs, shuffle = True)
 
-model.save('new_model.h5')
+#model.save('new_model.h5')
+model.save('model_50_epochs.h5')
 
 results = model.evaluate(test_x, test_y, batch_size=batch_size)
 print('test loss, test acc:', results)
