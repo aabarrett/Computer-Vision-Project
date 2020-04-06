@@ -18,6 +18,7 @@ from tqdm import tqdm
 import os
 import numpy as np
 import ssl
+import matplotlib.pyplot as plt
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -143,3 +144,20 @@ print('test loss, test acc:', results)
 print('\n# Generate predictions for 20 samples')
 predictions = model.predict(test_x[:15])
 print('predictions shape:', predictions.shape)
+
+# summarize history for accuracy
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+# summarize history for loss
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('model loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
